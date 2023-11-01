@@ -8,11 +8,12 @@
     "rollup": "^3.0.0"
   },
   "dependencies": {
+    "@codemirror/language": "^6.9.2",
     "@lezer/highlight": "^1.0.0",
     "@lezer/lr": "^1.0.0"
   },
   "scripts": {
-    "prebuild": "cd .. && ./mill jvm.codemirror",
-    "build": "rollup -c"
+    "preprepare": "cd .. && ./mill jvm.codemirror",
+    "prepare": "rollup -c"
   }
 }

@@ -20,12 +20,12 @@
     TwoCharString { "ᶴ" codepage codepage }
     TwoCharNumber { "~" codepage codepage }
 
-    structureOpen { $[[{(ḌṆƛΩ₳µ] | "#{" }
-    structureSingleClose { "}" }
-    structureDoubleClose { ")" }
-    structureAllClose { "]" }
-    listOpen { "#[" | "⟨" }
-    listClose { "#]" | "⟩" }
+    StructureOpen { $[[{(ḌṆƛΩ₳µ] | "#{" }
+    StructureSingleClose { "}" }
+    StructureDoubleClose { ")" }
+    StructureAllClose { "]" }
+    ListOpen { "#[" | "⟨" }
+    ListClose { "#]" | "⟩" }
 
     Digraph {
         (("∆" | "ø" | "Þ" | "k") codepage)
@@ -45,18 +45,18 @@
 
     Eof { @eof }
 
-    @precedence { "#=", "#[", "#$", "#>", listOpen, structureOpen, Digraph }
+    @precedence { "#=", "#[", "#$", "#>", ListOpen, StructureOpen, Digraph }
     @precedence { "!", "*", ElementChar }
 }
 
 StructureBody { !element (Element* ("|" Element)*)? }
 Structure {
-    (structureOpen StructureBody (structureSingleClose | Eof))
-    | (structureOpen structureOpen StructureBody structureDoubleClose structureDoubleClose)
-    | (structureOpen+ !structure StructureBody structureAllClose)
+    (StructureOpen StructureBody (StructureSingleClose | Eof))
+    | (StructureOpen StructureOpen StructureBody StructureDoubleClose StructureDoubleClose)
+    | (StructureOpen+ !structure StructureBody StructureAllClose)
 }
 
-Lambda { "λ" (LambdaArgs "|")? Element* (structureSingleClose | Eof) }
+Lambda { "λ" (LambdaArgs "|")? Element* (StructureSingleClose | Eof) }
 LambdaArgs { "!" | (NumberPart | VariableName | "*")* }
 
 VariableGet { "#$" VariableName }
@@ -67,7 +67,7 @@ VariableUnpackExpr { VariableName | "[" VariableUnpackExpr "]" }
 
 ContextIndex { "¤" NumberPart }
 
-List { listOpen (Element ("|" Element)*)? listClose }
+List { ListOpen (Element ("|" Element)*)? ListClose }
 
 Element {
     ElementChar

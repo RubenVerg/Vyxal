@@ -1,7 +1,7 @@
 import {lezer} from "@lezer/generator/rollup"
 
 export default {
-  input: "./build/vy.grammar",
+  input: "./src/highlight.ts",
   output: [{
     format: "es",
     file: "./build/vy.js"

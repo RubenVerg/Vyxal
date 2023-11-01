@@ -159,11 +159,10 @@ object jvm extends VyxalModule {
   def codemirror =
     T.sources {
       val base = build.millSourcePath / "highlighter"
-      os.makeDir.all(base / "build")
       for (file <- os.list(base / "grammars"))
         yield {
           val substituted: String = runMethod(jvm.runClasspath(), "vyxal.gen.PreGenerateCodemirror", "generate", os.read(file))
-          val target = base / "build" / file.last
+          val target = base / "src" / file.last
           os.write.over(target, substituted)
           PathRef(file)
         }
