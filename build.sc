@@ -118,13 +118,14 @@ object jvm extends VyxalModule {
       classpath: Seq[PathRef],
       objectName: String,
       methodName: String,
+      args: Object*
   ): T = {
     val urls = classpath.map(_.path.toIO.toURI.toURL).toArray
     val cl = new URLClassLoader(urls, getClass.getClassLoader)
     val clazz = Class.forName(objectName + "$", false, cl)
-    val method = clazz.getMethod(methodName)
+    val method = clazz.getMethod(methodName, args.map(_.getClass):_*)
     val singleton = clazz.getField("MODULE$").get(null)
-    method.invoke(singleton).asInstanceOf[T]
+    method.invoke(singleton, args:_*).asInstanceOf[T]
   }
 
   /** Generate elements.txt and trigraphs.txt */
@@ -154,6 +155,18 @@ object jvm extends VyxalModule {
           os.write.over(file, contents)
           PathRef(file)
       }.toSeq
+    }
+  def codemirror =
+    T.sources {
+      val base = build.millSourcePath / "highlighter"
+      os.makeDir.all(base / "build")
+      for (file <- os.list(base / "grammars"))
+        yield {
+          val substituted: String = runMethod(jvm.runClasspath(), "vyxal.gen.PreGenerateCodemirror", "generate", os.read(file))
+          val target = base / "build" / file.last
+          os.write.over(target, substituted)
+          PathRef(file)
+        }
     }
 
   object test extends ScalaTests with VyxalTestModule

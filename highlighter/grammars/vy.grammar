@@ -1,0 +1,100 @@
+@precedence {
+    structure,
+    augAssign,
+    element
+}
+
+@tokens {
+    codepage { $[{{codepage}}] }
+    codepageExcludingCharactersThatArentAllowedInHashDigraphs { $[{{codepageExcludingCharactersThatArentAllowedInHashDigraphs}}] }
+
+    posDigit { $[1-9] }
+    digit { $[0-9] }
+    NumberPart { "0" | posDigit digit* }
+    numberDecimal { NumberPart? "." NumberPart? }
+    NumberReal { "0" | NumberPart | numberDecimal }
+    Number { NumberReal "ı" NumberReal }
+
+    String { '"' codepage* ('"' | "„" | "”" | "“") }
+    SingleCharString { "'" codepage }
+    TwoCharString { "ᶴ" codepage codepage }
+    TwoCharNumber { "~" codepage codepage }
+
+    structureOpen { $[[{(ḌṆƛΩ₳µ] | "#{" }
+    structureSingleClose { "}" }
+    structureDoubleClose { ")" }
+    structureAllClose { "]" }
+    listOpen { "#[" | "⟨" }
+    listClose { "#]" | "⟩" }
+
+    Digraph {
+        (("∆" | "ø" | "Þ" | "k") codepage)
+        | "#" codepageExcludingCharactersThatArentAllowedInHashDigraphs
+    }
+    SugarTrigraph { "#" ("." | "," | "^") codepage }
+    SyntaxTrigraph { "#:" codepage }
+
+    ElementChar { $[{{elementChar}}] }
+    OneModChar { $[{{oneModChar}}] }
+    TwoModChar { $[{{twoModChar}}] }
+    ThreeModChar { $[{{threeModChar}}] }
+    FourModChar { $[{{fourModChar}}] }
+    SpecialModChar { $[{{specialModChar}}] }
+
+    VariableName { $[a-zA-Z] $[a-zA-Z0-9_] }
+
+    Eof { @eof }
+
+    @precedence { "#=", "#[", "#$", "#>", listOpen, structureOpen, Digraph }
+    @precedence { "!", "*", ElementChar }
+}
+
+StructureBody { !element (Element* ("|" Element)*)? }
+Structure {
+    (structureOpen StructureBody (structureSingleClose | Eof))
+    | (structureOpen structureOpen StructureBody structureDoubleClose structureDoubleClose)
+    | (structureOpen+ !structure StructureBody structureAllClose)
+}
+
+Lambda { "λ" (LambdaArgs "|")? Element* (structureSingleClose | Eof) }
+LambdaArgs { "!" | (NumberPart | VariableName | "*")* }
+
+VariableGet { "#$" VariableName }
+VariableAssign { "#=" VariableName }
+VariableAugAssign { Element !augAssign "#>" VariableName }
+VariableUnpack { "#[" VariableUnpackExpr* "]" }
+VariableUnpackExpr { VariableName | "[" VariableUnpackExpr "]" }
+
+ContextIndex { "¤" NumberPart }
+
+List { listOpen (Element ("|" Element)*)? listClose }
+
+Element {
+    ElementChar
+    | OneModChar   Element
+    | TwoModChar   Element Element
+    | ThreeModChar Element Element Element
+    | FourModChar  Element Element Element Element
+    | Structure
+    | VariableAssign
+    | VariableGet
+    | VariableAugAssign
+    | Lambda
+    | VariableUnpack
+    | ContextIndex
+    | List
+}
+
+ProgramComponent {
+    Element
+    | String
+    | Number
+    | SingleCharString
+    | TwoCharString
+    | TwoCharNumber
+    | Digraph
+    | SugarTrigraph
+    | SyntaxTrigraph
+}
+
+@top Program { ProgramComponent+ }
