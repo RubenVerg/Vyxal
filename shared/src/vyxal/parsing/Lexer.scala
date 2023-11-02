@@ -139,6 +139,14 @@ object Lexer:
 
   val UnicodeCommands = "🍪ඞ"
 
+  val SyntaxDigraphs = "[]$!=#>@{"
+
+  val MonadicModifiers = "ᵃᵇᶜᵈᴴᶤᶨᵏᶪᵐⁿᵒᵖᴿᶳᵗᵘᵂᵡᵞᶻ¿⸠/\\\\~v@`"
+  val DyadicModifiers = "ϩ∥∦ᵉ"
+  val TriadicModifiers = "эᶠ"
+  val TetradicModifiers = "Чᶢ"
+  val SpecialModifiers = "ᵜ"
+
   def literateModeMappings: Map[String, String] =
     LiterateLexer.literateModeMappings
 

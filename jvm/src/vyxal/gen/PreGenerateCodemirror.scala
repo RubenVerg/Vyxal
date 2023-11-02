@@ -9,30 +9,25 @@ private[vyxal] object PreGenerateCodemirror:
     .filter(_ != '\n')
     .map(c => "\\u" + Integer.toHexString(c | 0x10000).substring(1))
     .mkString
-  val charactersThatArentAllowedInHashDigraphs = "[]$!=#>@{".toCharArray()
-  val codepageExcludingCharactersThatArentAllowedInHashDigraphs =
-    codepage.filterNot(charactersThatArentAllowedInHashDigraphs.contains(_))
+  val digraphable = codepage.filterNot(Lexer.SyntaxDigraphs.contains(_))
   val elements = Elements.elements.keys
-    .filterNot(_.startsWith("#"))
+    .filterNot(s => !"∆øÞk#".contains(s(0)))
     .map(_.charAt(0))
     .map(c => "\\u" + Integer.toHexString(c | 0x10000).substring(1))
     .mkString
-  val modifiersByArity =
-    Modifiers.modifiers.groupBy(_._2.arity).view.mapValues(_.keys.mkString)
 
   def generate(input: String): String =
     GenTools.template(
       input,
       Map(
         "codepage" -> codepage,
-        "codepageExcludingCharactersThatArentAllowedInHashDigraphs" ->
-          codepageExcludingCharactersThatArentAllowedInHashDigraphs,
+        "digraphable" -> digraphable,
         "elementChar" -> elements,
-        "oneModChar" -> modifiersByArity.get(1).get,
-        "twoModChar" -> modifiersByArity.get(2).get,
-        "threeModChar" -> modifiersByArity.get(3).get,
-        "fourModChar" -> modifiersByArity.get(4).get,
-        "specialModChar" -> "",
+        "oneModChar" -> Lexer.MonadicModifiers,
+        "twoModChar" -> Lexer.DyadicModifiers,
+        "threeModChar" -> Lexer.TriadicModifiers,
+        "fourModChar" -> Lexer.TetradicModifiers,
+        "specialModChar" -> "ᵜ",
       ),
     )
 end PreGenerateCodemirror

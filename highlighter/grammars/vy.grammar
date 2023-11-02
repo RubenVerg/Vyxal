@@ -6,7 +6,7 @@
 
 @tokens {
     codepage { $[{{codepage}}] }
-    codepageExcludingCharactersThatArentAllowedInHashDigraphs { $[{{codepageExcludingCharactersThatArentAllowedInHashDigraphs}}] }
+    digraphable { $[{{digraphable}}] }
 
     posDigit { $[1-9] }
     digit { $[0-9] }
@@ -29,7 +29,7 @@
 
     Digraph {
         (("∆" | "ø" | "Þ" | "k") codepage)
-        | "#" codepageExcludingCharactersThatArentAllowedInHashDigraphs
+        | "#" digraphable
     }
     SugarTrigraph { "#" ("." | "," | "^") codepage }
     SyntaxTrigraph { "#:" codepage }
@@ -83,18 +83,9 @@ Element {
     | VariableUnpack
     | ContextIndex
     | List
-}
-
-ProgramComponent {
-    Element
-    | String
     | Number
-    | SingleCharString
-    | TwoCharString
-    | TwoCharNumber
-    | Digraph
-    | SugarTrigraph
-    | SyntaxTrigraph
+    | String
 }
 
-@top Program { ProgramComponent+ }
+
+@top Program { Element+ }
