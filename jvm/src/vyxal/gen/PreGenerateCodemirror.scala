@@ -2,7 +2,6 @@ package vyxal.gen
 
 import vyxal.parsing.Lexer
 import vyxal.Elements
-import vyxal.Modifiers
 
 private[vyxal] object PreGenerateCodemirror:
   val codepage = Lexer.Codepage
