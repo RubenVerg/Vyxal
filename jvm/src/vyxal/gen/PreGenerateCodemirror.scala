@@ -10,7 +10,7 @@ private[vyxal] object PreGenerateCodemirror:
     .mkString
   val digraphable = codepage.filterNot(Lexer.SyntaxDigraphs.contains(_))
   val elements = Elements.elements.keys
-    .filterNot(s => !"∆øÞk#".contains(s(0)))
+    .filterNot(s => "∆øÞk#".contains(s(0)))
     .map(_.charAt(0))
     .map(c => "\\u" + Integer.toHexString(c | 0x10000).substring(1))
     .mkString
